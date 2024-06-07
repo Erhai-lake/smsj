@@ -3,8 +3,8 @@
 ## 步骤拆解
 
 - [x] 需求分析
-- [ ] 数据库设计
-- [ ] 数据库数据录入
+- [x] 数据库设计
+- [x] 数据库数据录入
 - [ ] 项目开发
 - [ ] 答辩PPT
 
@@ -18,8 +18,7 @@
    1. 药品收费
 3. 药品管理
    1. 药品信息
-   2. 数量
-   3. 有效时间
+   2. 价格
 4. 职员管理
    1. 职员增添
    2. 删除
@@ -31,8 +30,10 @@
 
 ## 数据库设计
 
-挂号表(RegistrationId, UserName, Cell, SectionId)
-收费表(ChargesId, Registration, Charges, Status)
-药品表(DrugsId, ChargesId, Registration)
-职员表(StaffId, StaffName, Time)
-科室表(SectionId, SectionName, StaffId)
+1. 挂号表:Registration(RegistrationId, UserName, Cell, SectionId)
+2. 收费表:Charges(ChargesId, RegistrationId, Charges, Status)
+3. 药品表:Drugs(DrugsId, DrugsName, DrugsCharges)
+4. 职员表:Staff(StaffId, StaffName, Time)
+5. 科室表:Section(SectionId, SectionName, StaffId)
+6. SQL表见`MySQL.sql`文件
+

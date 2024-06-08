@@ -17,42 +17,49 @@ public class Registration {
 
   // 菜单
   public void Menu() {
-    System.out.println("*** 挂号管理 ***");
-    System.out.println("1. 新增");
-    System.out.println("2. 删除");
-    System.out.println("3. 查询");
-    System.out.println("4. 返回");
-    System.out.print("请输入对应的编号: ");
-    int Input = Scanner.nextInt();
-    switch (Input) {
-      case 1:
-        break;
-      case 2:
-        break;
-      case 3:
-        System.out.print("请输入你要查询的用户名: ");
-        String UserName = Scanner.next();
-        try {
-          String SQL = "SELECT * FROM Registration WHERE UserName = ?";
-          PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
-          PreparedStatement.setString(1, UserName);
-          ResultSet ResultSet = PreparedStatement.executeQuery();
-          if (!ResultSet.next()) {
-            System.out.println("没有找到匹配的数据");
-          } else {
-            do {
-              System.out.println("ID: " + ResultSet.getInt("RegistrationId") + ", Name: " + ResultSet.getString("UserName"));
-            } while (ResultSet.next());
+    boolean Status = true;
+    do {
+      System.out.println("*** 挂号管理 ***");
+      System.out.println("1. 新增");
+      System.out.println("2. 删除");
+      System.out.println("3. 查询");
+      System.out.println("4. 返回");
+      System.out.print("请输入对应的编号: ");
+      int Input = Scanner.nextInt();
+      switch (Input) {
+        case 1:
+          // 新增
+          break;
+        case 2:
+          // 删除
+          break;
+        case 3:
+          // 查询
+          System.out.print("请输入你要查询的用户名: ");
+          String UserName = Scanner.next();
+          try {
+            String SQL = "SELECT * FROM Registration WHERE UserName = ?";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setString(1, UserName);
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            if (!ResultSet.next()) {
+              System.out.println("没有找到匹配的数据");
+            } else {
+              do {
+                System.out.println("ID: " + ResultSet.getInt("RegistrationId") + ", Name: " + ResultSet.getString("UserName"));
+              } while (ResultSet.next());
+            }
+          } catch (SQLException e) {
+            System.out.println("查询数据时出现错误:" + e.getMessage());
           }
-        } catch (SQLException e) {
-          System.out.println("查询数据时出现错误:" + e.getMessage());
-        }
-        break;
-      case 4:
-        break;
-      default:
-        System.out.println("输入有误,请重新输入");
-        Menu();
-    }
+          break;
+        case 4:
+          // 返回
+          Status = false;
+          break;
+        default:
+          System.out.println("输入有误,请重新输入");
+      }
+    } while (Status);
   }
 }

@@ -35,8 +35,41 @@ public class Charges {
             break;
           }
           Query(UserName, !UserName.matches("[0-9]+"));
+          System.out.print("请选择要操作的编号: ");
+          int ID = Scanner.nextInt();
+          SelectedMenu(ID);
           break;
         case 2:
+          // 返回
+          Status = false;
+          break;
+        default:
+          System.out.println("输入有误,请重新输入");
+      }
+    } while (Status);
+  }
+
+  // 选中菜单
+  public void SelectedMenu(int ID) {
+    boolean Status = true;
+    do {
+      System.out.println("*** 操作 ***");
+      System.out.println("1. 缴费");
+      System.out.println("2. 重新选择");
+      System.out.println("3. 返回");
+      System.out.print("请输入对应的操作编号: ");
+      int Input = Scanner.nextInt();
+      switch (Input) {
+        case 1:
+          // 删除
+          Status = Payment(ID);
+          break;
+        case 2:
+          // 重新选择
+          System.out.print("请选择要操作的编号: ");
+          ID = Scanner.nextInt();
+          break;
+        case 3:
           // 返回
           Status = false;
           break;
@@ -84,7 +117,7 @@ public class Charges {
   }
 
   // 缴费
-  public void Payment(int ChargesId) {
+  public boolean Payment(int ChargesId) {
     try {
       String SQL = "UPDATE Charges SET Status = ? WHERE ChargesId = ?";
       PreparedStatement preparedStatement = MySQLConnection.prepareStatement(SQL);
@@ -92,8 +125,10 @@ public class Charges {
       preparedStatement.setInt(2, ChargesId);
       preparedStatement.executeUpdate();
       System.out.println("缴费成功");
+      return false;
     } catch (SQLException e) {
       System.out.println("缴费时出现错误:" + e.getMessage());
+      return true;
     }
   }
 
@@ -111,7 +146,6 @@ public class Charges {
       if (!ResultSet.next()) {
         System.out.println("没有找到匹配的数据");
       } else {
-        Payment(ID);
         System.out.println("编号\t费用\t缴费状态");
         do {
           if (ResultSet.getString("Status").equals("0")) {

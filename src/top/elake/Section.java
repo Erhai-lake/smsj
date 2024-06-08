@@ -19,7 +19,7 @@ public class Section {
       System.out.println("2. 删除");
       System.out.println("3. 查询");
       System.out.println("4. 返回");
-      System.out.print("请输入对应的编号: ");
+      System.out.print("请输入对应的操作编号: ");
       int Input = Scanner.nextInt();
       switch (Input) {
         case 1:

@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class Main {
   static Scanner Scanner = new Scanner(System.in);
   static Connection MySQLConnection;
-
   public static void main(String[] args) {
+    System.out.println("正在连接数据库,请稍后...");
     MySQLConnection = ConnectToMySQL();
     // 主菜单
     boolean Status = true;
@@ -31,7 +31,7 @@ public class Main {
       System.out.println("4. 职员管理");
       System.out.println("5. 科室管理");
       System.out.println("6. 退出");
-      System.out.print("请输入对应的编号: ");
+      System.out.print("请输入对应的操作编号: ");
       int Input = Scanner.nextInt();
       switch (Input) {
         case 1:

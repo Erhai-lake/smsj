@@ -3,6 +3,7 @@ package top.elake;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 import static top.elake.Main.MySQLConnection;
@@ -26,7 +27,7 @@ public class Registration {
       System.out.println("1. 新增");
       System.out.println("2. 查询");
       System.out.println("3. 返回");
-      System.out.print("请输入对应的编号: ");
+      System.out.print("请输入对应的操作编号: ");
       int Input = Scanner.nextInt();
       switch (Input) {
         case 1:
@@ -53,6 +54,9 @@ public class Registration {
             break;
           }
           Query(UserName, !UserName.matches("[0-9]+"));
+          System.out.print("请选择要操作的编号: ");
+          int ID = Scanner.nextInt();
+          SelectedMenu(ID);
           break;
         case 3:
           // 返回
@@ -65,16 +69,14 @@ public class Registration {
   }
 
   // 选中菜单
-  public void SelectedMenu() {
-    System.out.print("请选择要操作的编号: ");
-    int ID = Scanner.nextInt();
+  public void SelectedMenu(int ID) {
     boolean Status = true;
     do {
       System.out.println("*** 操作 ***");
       System.out.println("1. 删除");
       System.out.println("2. 重新选择");
       System.out.println("3. 返回");
-      System.out.print("请输入对应的编号: ");
+      System.out.print("请输入对应的操作编号: ");
       int Input = Scanner.nextInt();
       switch (Input) {
         case 1:
@@ -100,14 +102,38 @@ public class Registration {
   public void New(String UserName, String Cell, int SectionId) {
     try {
       String SQL = "INSERT INTO Registration (UserName, Cell, SectionId) VALUES (?, ?, ?)";
-      PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+      PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
       PreparedStatement.setString(1, UserName);
       PreparedStatement.setString(2, Cell);
       PreparedStatement.setInt(3, SectionId);
       PreparedStatement.executeUpdate();
-      System.out.println("挂号成功");
+      // 这里要收13块钱挂号费
+      ResultSet GeneratedKeys = PreparedStatement.getGeneratedKeys();
+      if (GeneratedKeys.next()) {
+        int RegistrationId = GeneratedKeys.getInt(1);
+        System.out.println("挂号成功,挂号号为: " + RegistrationId);
+        Charges Charges = new Charges();
+        Charges.New(RegistrationId);
+      } else {
+        System.out.println("无法获取挂号号");
+      }
     } catch (SQLException e) {
       System.out.println("挂号时出现错误:" + e.getMessage());
+    }
+  }
+
+  // 删除
+  public Boolean Delete(int RegistrationId) {
+    try {
+      String SQL = "DELETE FROM Registration WHERE RegistrationId = ?";
+      PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+      PreparedStatement.setInt(1, RegistrationId);
+      PreparedStatement.executeUpdate();
+      System.out.println("挂号删除成功");
+      return false;
+    } catch (SQLException e) {
+      System.out.println("删除挂号时出现错误:" + e.getMessage());
+      return true;
     }
   }
 
@@ -130,25 +156,9 @@ public class Registration {
         do {
           System.out.println(ResultSet.getInt("RegistrationId") + "\t" + ResultSet.getString("UserName") + "\t" + ResultSet.getString("Cell") + "\t" + ResultSet.getString("SectionId"));
         } while (ResultSet.next());
-        SelectedMenu();
       }
     } catch (SQLException e) {
       System.out.println("查询挂号时出现错误:" + e.getMessage());
-    }
-  }
-
-  // 删除
-  public Boolean Delete(int RegistrationId) {
-    try {
-      String SQL = "DELETE FROM Registration WHERE RegistrationId = ?";
-      PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
-      PreparedStatement.setInt(1, RegistrationId);
-      PreparedStatement.executeUpdate();
-      System.out.println("挂号删除成功");
-      return false;
-    } catch (SQLException e) {
-      System.out.println("删除挂号时出现错误:" + e.getMessage());
-      return true;
     }
   }
 }

@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class Charges {
   Scanner Scanner = new Scanner(System.in);
 
+  // 菜单
   public void Menu() {
     System.out.println("*** 收费管理 ***");
     System.out.println("1. 查询");
@@ -20,8 +21,6 @@ public class Charges {
       case 1:
         break;
       case 2:
-        MainMenu MainMenu = new MainMenu();
-        MainMenu.Menu();
         break;
       default:
         System.out.println("输入有误,请重新输入");

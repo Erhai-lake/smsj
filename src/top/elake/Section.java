@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class Section {
   java.util.Scanner Scanner = new Scanner(System.in);
 
+  // 菜单
   public void Menu() {
     System.out.println("*** 科室管理 ***");
     System.out.println("1. 新增");
@@ -26,8 +27,6 @@ public class Section {
       case 3:
         break;
       case 4:
-        MainMenu MainMenu = new MainMenu();
-        MainMenu.Menu();
         break;
       default:
         System.out.println("输入有误,请重新输入");

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -33,39 +34,44 @@ public class Main {
             System.out.println("5. 科室管理");
             System.out.println("6. 退出");
             System.out.print("请输入对应的操作编号: ");
-            int Input = Scanner.nextInt();
-            switch (Input) {
-                case 1:
-                    // 挂号管理
-                    Registration Registration = new Registration();
-                    Registration.Menu();
-                    break;
-                case 2:
-                    // 收费管理
-                    Charges Charges = new Charges();
-                    Charges.Menu();
-                    break;
-                case 3:
-                    // 药品管理
-                    Drugs Drugs = new Drugs();
-                    Drugs.Menu();
-                    break;
-                case 4:
-                    // 职员管理
-                    Staff Staff = new Staff();
-                    Staff.Menu();
-                    break;
-                case 5:
-                    // 科室管理
-                    Section Section = new Section();
-                    Section.Menu();
-                    break;
-                case 6:
-                    // 退出
-                    Status = false;
-                    break;
-                default:
-                    System.out.println("输入有误,请重新输入");
+            try {
+                int Input = Scanner.nextInt();
+                switch (Input) {
+                    case 1:
+                        // 挂号管理
+                        Registration Registration = new Registration();
+                        Registration.Menu();
+                        break;
+                    case 2:
+                        // 收费管理
+                        Charges Charges = new Charges();
+                        Charges.Menu();
+                        break;
+                    case 3:
+                        // 药品管理
+                        Drugs Drugs = new Drugs();
+                        Drugs.Menu();
+                        break;
+                    case 4:
+                        // 职员管理
+                        Staff Staff = new Staff();
+                        Staff.Menu();
+                        break;
+                    case 5:
+                        // 科室管理
+                        Section Section = new Section();
+                        Section.Menu();
+                        break;
+                    case 6:
+                        // 退出
+                        Status = false;
+                        break;
+                    default:
+                        System.out.println("输入有误,请重新输入");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("输入有误,请重新输入");
+                Scanner.nextLine();
             }
         } while (Status);
         CloseConnection();

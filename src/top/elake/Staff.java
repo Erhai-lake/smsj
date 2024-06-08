@@ -1,5 +1,6 @@
 package top.elake;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -20,23 +21,28 @@ public class Staff {
             System.out.println("3. 查询");
             System.out.println("4. 返回");
             System.out.print("请输入对应的操作编号: ");
-            int Input = Scanner.nextInt();
-            switch (Input) {
-                case 1:
-                    // 新增
-                    break;
-                case 2:
-                    // 删除
-                    break;
-                case 3:
-                    // 查询
-                    break;
-                case 4:
-                    // 返回
-                    Status = false;
-                    break;
-                default:
-                    System.out.println("输入有误,请重新输入");
+            try {
+                int Input = Scanner.nextInt();
+                switch (Input) {
+                    case 1:
+                        // 新增
+                        break;
+                    case 2:
+                        // 删除
+                        break;
+                    case 3:
+                        // 查询
+                        break;
+                    case 4:
+                        // 返回
+                        Status = false;
+                        break;
+                    default:
+                        System.out.println("输入有误,请重新输入");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("输入有误,请重新输入");
+                Scanner.nextLine();
             }
         } while (Status);
     }

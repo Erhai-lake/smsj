@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static top.elake.Main.MySQLConnection;
@@ -28,42 +29,47 @@ public class Registration {
             System.out.println("2. 查询");
             System.out.println("3. 返回");
             System.out.print("请输入对应的操作编号: ");
-            int Input = Scanner.nextInt();
-            switch (Input) {
-                case 1:
-                    // 新增
-                    System.out.print("请输入用户名: ");
-                    UserName = Scanner.next();
-                    System.out.print("请输入电话号码: ");
-                    Cell = Scanner.next();
-                    if (UserName.isEmpty() || Cell.isEmpty()) {
-                        System.out.println("用户名或电话号码不能为空");
+            try {
+                int Input = Scanner.nextInt();
+                switch (Input) {
+                    case 1:
+                        // 新增
+                        System.out.print("请输入用户名: ");
+                        UserName = Scanner.next();
+                        System.out.print("请输入电话号码: ");
+                        Cell = Scanner.next();
+                        if (UserName.isEmpty() || Cell.isEmpty()) {
+                            System.out.println("用户名或电话号码不能为空");
+                            break;
+                        }
+                        // 等科室写完,这里写一个选择科室的
+                        SectionId = 1;
+                        // 暂时使用1
+                        New(UserName, Cell, SectionId);
                         break;
-                    }
-                    // 等科室写完,这里写一个选择科室的
-                    SectionId = 1;
-                    // 暂时使用1
-                    New(UserName, Cell, SectionId);
-                    break;
-                case 2:
-                    // 查询
-                    System.out.print("请输入你要查询的名称或电话号码: ");
-                    UserName = Scanner.next();
-                    if (UserName.isEmpty()) {
-                        System.out.println("名称或电话号码不能为空");
+                    case 2:
+                        // 查询
+                        System.out.print("请输入你要查询的名称或电话号码: ");
+                        UserName = Scanner.next();
+                        if (UserName.isEmpty()) {
+                            System.out.println("名称或电话号码不能为空");
+                            break;
+                        }
+                        Query(UserName, !UserName.matches("[0-9]+"));
+                        System.out.print("请选择要操作的编号: ");
+                        int ID = Scanner.nextInt();
+                        SelectedMenu(ID);
                         break;
-                    }
-                    Query(UserName, !UserName.matches("[0-9]+"));
-                    System.out.print("请选择要操作的编号: ");
-                    int ID = Scanner.nextInt();
-                    SelectedMenu(ID);
-                    break;
-                case 3:
-                    // 返回
-                    Status = false;
-                    break;
-                default:
-                    System.out.println("输入有误,请重新输入");
+                    case 3:
+                        // 返回
+                        Status = false;
+                        break;
+                    default:
+                        System.out.println("输入有误,请重新输入");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("输入有误,请重新输入");
+                Scanner.nextLine();
             }
         } while (Status);
     }
@@ -77,23 +83,28 @@ public class Registration {
             System.out.println("2. 重新选择");
             System.out.println("3. 返回");
             System.out.print("请输入对应的操作编号: ");
-            int Input = Scanner.nextInt();
-            switch (Input) {
-                case 1:
-                    // 删除
-                    Status = Delete(ID);
-                    break;
-                case 2:
-                    // 重新选择
-                    System.out.print("请选择要操作的编号: ");
-                    ID = Scanner.nextInt();
-                    break;
-                case 3:
-                    // 返回
-                    Status = false;
-                    break;
-                default:
-                    System.out.println("输入有误,请重新输入");
+            try {
+                int Input = Scanner.nextInt();
+                switch (Input) {
+                    case 1:
+                        // 删除
+                        Status = Delete(ID);
+                        break;
+                    case 2:
+                        // 重新选择
+                        System.out.print("请选择要操作的编号: ");
+                        ID = Scanner.nextInt();
+                        break;
+                    case 3:
+                        // 返回
+                        Status = false;
+                        break;
+                    default:
+                        System.out.println("输入有误,请重新输入");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("输入有误,请重新输入");
+                Scanner.nextLine();
             }
         } while (Status);
     }

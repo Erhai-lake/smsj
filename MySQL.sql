@@ -1,5 +1,4 @@
-use
-    smsj;
+use smsj;
 
 -- 挂号表
 CREATE TABLE `Registration`

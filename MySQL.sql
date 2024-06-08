@@ -16,7 +16,7 @@ CREATE TABLE `Charges`
     `ChargesId`      INT          NOT NULL AUTO_INCREMENT COMMENT '收费ID',
     `RegistrationId` INT          NOT NULL COMMENT '挂号ID',
     `Charges`        VARCHAR(255) NOT NULL COMMENT '费用',
-    `Status`         TINYINT(1) COMMENT '状态(0:已缴费,1:未缴费)',
+    `Status`         INT COMMENT '状态(0:已缴费,1:未缴费)',
     PRIMARY KEY (`ChargesId`),
     CONSTRAINT `Charges_RegistrationId` FOREIGN KEY (`RegistrationId`) REFERENCES `Registration` (`RegistrationId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT = '收费表';

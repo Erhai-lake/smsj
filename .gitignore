@@ -29,3 +29,4 @@ bin/
 .DS_Store
 
 config.properties
+/.idea/

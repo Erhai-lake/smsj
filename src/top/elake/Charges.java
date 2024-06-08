@@ -61,7 +61,41 @@ public class Charges {
   }
 
   // 修改
-//  public void Modify(){}
+  public void Modify(int ChargesId, int Charges) {
+    try {
+      String SQL;
+      SQL = "SELECT Charges FROM Charges WHERE ChargesId = ?";
+      PreparedStatement selectStatement = MySQLConnection.prepareStatement(SQL);
+      selectStatement.setInt(1, ChargesId);
+      ResultSet ResultSet = selectStatement.executeQuery();
+      if (ResultSet.next()) {
+        double CurrentCharges = Double.parseDouble(ResultSet.getString("Charges"));
+        SQL = "UPDATE Charges SET Charges = ? WHERE ChargesId = ?";
+        PreparedStatement preparedStatement = MySQLConnection.prepareStatement(SQL);
+        preparedStatement.setString(1, String.valueOf(CurrentCharges + Charges));
+        preparedStatement.setInt(2, ChargesId);
+        preparedStatement.executeUpdate();
+      } else {
+        System.out.println("未找到对应的费用记录");
+      }
+    } catch (SQLException e) {
+      System.out.println("记录费用时出现错误:" + e.getMessage());
+    }
+  }
+
+  // 缴费
+  public void Payment(int ChargesId) {
+    try {
+      String SQL = "UPDATE Charges SET Status = ? WHERE ChargesId = ?";
+      PreparedStatement preparedStatement = MySQLConnection.prepareStatement(SQL);
+      preparedStatement.setInt(1, 0);
+      preparedStatement.setInt(2, ChargesId);
+      preparedStatement.executeUpdate();
+      System.out.println("缴费成功");
+    } catch (SQLException e) {
+      System.out.println("缴费时出现错误:" + e.getMessage());
+    }
+  }
 
   // 查询
   public void Query(String Value, Boolean Type) {
@@ -77,12 +111,13 @@ public class Charges {
       if (!ResultSet.next()) {
         System.out.println("没有找到匹配的数据");
       } else {
+        Payment(ID);
         System.out.println("编号\t费用\t缴费状态");
         do {
           if (ResultSet.getString("Status").equals("0")) {
             System.out.println(ResultSet.getInt("ChargesId") + "\t" + ResultSet.getString("Charges") + "\t" + "已缴费");
           } else {
-            System.out.println(ResultSet.getInt("ChargesId") + "\t" + ResultSet.getString("Charges") + "\t" +  "未缴费");
+            System.out.println(ResultSet.getInt("ChargesId") + "\t" + ResultSet.getString("Charges") + "\t" + "未缴费");
           }
         } while (ResultSet.next());
       }

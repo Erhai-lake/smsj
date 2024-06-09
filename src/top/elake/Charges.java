@@ -105,23 +105,26 @@ public class Charges {
     }
 
     // 修改
-    public void Modify(int ChargesId, int Charges) {
+    public void Modify(int RegistrationId, int DrugsId) {
+        String SQL;
         try {
-            String SQL;
-            SQL = "SELECT Charges FROM Charges WHERE ChargesId = ?";
+            SQL = "SELECT DrugsCharges FROM Drugs WHERE DrugsId = ?";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setInt(1, DrugsId);
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            ResultSet.next();
+            double Charges = Double.parseDouble(ResultSet.getString("DrugsCharges"));
+            SQL = "SELECT Charges FROM Charges WHERE RegistrationId = ?";
             PreparedStatement selectStatement = MySQLConnection.prepareStatement(SQL);
-            selectStatement.setInt(1, ChargesId);
-            ResultSet ResultSet = selectStatement.executeQuery();
-            if (ResultSet.next()) {
-                double CurrentCharges = Double.parseDouble(ResultSet.getString("Charges"));
-                SQL = "UPDATE Charges SET Charges = ? WHERE ChargesId = ?";
-                PreparedStatement preparedStatement = MySQLConnection.prepareStatement(SQL);
-                preparedStatement.setString(1, String.valueOf(CurrentCharges + Charges));
-                preparedStatement.setInt(2, ChargesId);
-                preparedStatement.executeUpdate();
-            } else {
-                System.out.println("未找到对应的费用记录");
-            }
+            selectStatement.setInt(1, RegistrationId);
+            ResultSet ResultSet2 = selectStatement.executeQuery();
+            ResultSet2.next();
+            double CurrentCharges = Double.parseDouble(ResultSet2.getString("Charges"));
+            SQL = "UPDATE Charges SET Charges = ? WHERE RegistrationId = ?";
+            PreparedStatement preparedStatement = MySQLConnection.prepareStatement(SQL);
+            preparedStatement.setString(1, String.valueOf(CurrentCharges + Charges));
+            preparedStatement.setInt(2, RegistrationId);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("记录费用时出现错误:" + e.getMessage());
         }

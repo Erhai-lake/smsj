@@ -17,9 +17,8 @@ public class Staff {
         do {
             System.out.println("*** 职员管理 ***");
             System.out.println("1. 新增");
-            System.out.println("2. 删除");
-            System.out.println("3. 查询");
-            System.out.println("4. 返回");
+            System.out.println("2. 查询");
+            System.out.println("3. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -28,12 +27,9 @@ public class Staff {
                         // 新增
                         break;
                     case 2:
-                        // 删除
-                        break;
-                    case 3:
                         // 查询
                         break;
-                    case 4:
+                    case 3:
                         // 返回
                         Status = false;
                         break;

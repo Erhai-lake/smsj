@@ -109,8 +109,9 @@ public class Drugs {
             System.out.println("*** 操作 ***");
             System.out.println("1. 删除");
             System.out.println("2. 开药");
-            System.out.println("3. 重新选择");
-            System.out.println("4. 返回");
+            System.out.println("3. 修改");
+            System.out.println("4. 重新选择");
+            System.out.println("5. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -124,11 +125,23 @@ public class Drugs {
                         Status = PrescribeMedicine(ID);
                         break;
                     case 3:
+                        // 修改
+                        System.out.print("请输入药品名: ");
+                        String DrugsName = Scanner.next();
+                        System.out.print("请输入药品价格: ");
+                        String DrugsCharges = Scanner.next();
+                        if (DrugsName.isEmpty() || DrugsCharges.isEmpty()) {
+                            System.out.println("药品名或药品价格不能为空");
+                            break;
+                        }
+                        Status = Modify(DrugsName, DrugsCharges, ID);
+                        break;
+                    case 4:
                         // 重新选择
                         System.out.print("请选择要操作的编号: ");
                         ID = Scanner.nextInt();
                         break;
-                    case 4:
+                    case 5:
                         // 返回
                         Status = false;
                         break;
@@ -198,6 +211,23 @@ public class Drugs {
             return false;
         } catch (SQLException e) {
             System.out.println("删除药品时出现错误:" + e.getMessage());
+            return true;
+        }
+    }
+
+    // 修改
+    public Boolean Modify(String DrugsName, String DrugsCharges, int DrugsId) {
+        try {
+            String SQL = "UPDATE Drugs SET DrugsName = ?, DrugsCharges = ? WHERE DrugsId = ?";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setString(1, DrugsName);
+            PreparedStatement.setString(2, DrugsCharges);
+            PreparedStatement.setInt(3, DrugsId);
+            PreparedStatement.executeUpdate();
+            System.out.println("药品修改成功");
+            return false;
+        } catch (SQLException e) {
+            System.out.println("修改药品时出现错误:" + e.getMessage());
             return true;
         }
     }

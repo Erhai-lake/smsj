@@ -24,7 +24,8 @@ public class Registration {
             System.out.println("*** 挂号管理 ***");
             System.out.println("1. 新增");
             System.out.println("2. 查询");
-            System.out.println("3. 返回");
+            System.out.println("3. 列出所有");
+            System.out.println("4. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -88,6 +89,25 @@ public class Registration {
                         }
                         break;
                     case 3:
+                        // 列出所有
+                        Result = QueryAll();
+                        if (Result.isEmpty()) {
+                            System.out.println("没有数据");
+                        } else {
+                            System.out.println("编号\t名字\t电话号码\t科室号");
+                            for (Object[] Row : Result) {
+                                int RegistrationIdRow = (int) Row[0];
+                                String UserNameRow = (String) Row[1];
+                                String CellRow = (String) Row[2];
+                                String SectionIdRow = (String) Row[3];
+                                System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            SelectedMenu(ID);
+                        }
+                        break;
+                    case 4:
                         // 返回
                         Status = false;
                         break;
@@ -198,6 +218,26 @@ public class Registration {
             }
         } catch (SQLException e) {
             System.out.println("查询挂号时出现错误:" + e.getMessage());
+        }
+        return ResultData;
+    }
+
+    public List<Object[]> QueryAll() {
+        List<Object[]> ResultData = new ArrayList<>();
+        String SQL = "SELECT * FROM Registration";
+        try {
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            while (ResultSet.next()) {
+                Object[] Data = new Object[4];
+                Data[0] = ResultSet.getInt("RegistrationId");
+                Data[1] = ResultSet.getString("UserName");
+                Data[2] = ResultSet.getString("Cell");
+                Data[3] = ResultSet.getString("SectionId");
+                ResultData.add(Data);
+            }
+        } catch (SQLException e) {
+            System.out.println("列出挂号时出现错误:" + e.getMessage());
         }
         return ResultData;
     }

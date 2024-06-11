@@ -45,7 +45,7 @@ public class Registration {
                         break;
                     case 2:
                         // 查询
-                        System.out.print("请输入你要查询的名称或电话号码: ");
+                        System.out.print("请输入你要查询的名称或电话号码(支持模糊搜索): ");
                         UserName = Scanner.next();
                         if (UserName.isEmpty()) {
                             System.out.println("名称或电话号码不能为空");

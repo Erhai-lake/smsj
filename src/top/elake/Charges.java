@@ -31,41 +31,41 @@ public class Charges {
                 switch (Input) {
                     case 1:
                         // 查询
-                        System.out.print("请输入你要查询的名称或电话号码: ");
+                        System.out.print("请输入你要查询的名称或电话号码(支持模糊搜索): ");
                         String Value = Scanner.next();
                         if (Value.isEmpty()) {
                             System.out.println("名称或电话号码不能为空");
+                            break;
+                        }
+                        Registration Registration = new Registration();
+                        List<Object[]> Result = Registration.Query(Value, !Value.matches("[0-9]+"));
+                        if (Result.isEmpty()) {
+                            System.out.println("没有找到匹配的数据");
                         } else {
-                            Registration Registration = new Registration();
-                            List<Object[]> Result = Registration.Query(Value, !Value.matches("[0-9]+"));
+                            System.out.println("编号\t名字\t电话号码\t科室号");
+                            for (Object[] Row : Result) {
+                                int RegistrationIdRow = (int) Row[0];
+                                String UserNameRow = (String) Row[1];
+                                String CellRow = (String) Row[2];
+                                String SectionIdRow = (String) Row[3];
+                                System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            Result = Query(ID);
                             if (Result.isEmpty()) {
                                 System.out.println("没有找到匹配的数据");
                             } else {
-                                System.out.println("编号\t名字\t电话号码\t科室号");
+                                System.out.println("编号\t费用\t状态");
                                 for (Object[] Row : Result) {
-                                    int RegistrationIdRow = (int) Row[0];
-                                    String UserNameRow = (String) Row[1];
-                                    String CellRow = (String) Row[2];
-                                    String SectionIdRow = (String) Row[3];
-                                    System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
+                                    int ChargesIdRow = (int) Row[0];
+                                    String ChargesRow = (String) Row[1];
+                                    String StatusRow = (String) Row[2];
+                                    System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
                                 }
                                 System.out.print("请选择要操作的编号: ");
-                                int ID = Scanner.nextInt();
-                                Result = Query(ID);
-                                if (Result.isEmpty()) {
-                                    System.out.println("没有找到匹配的数据");
-                                } else {
-                                    System.out.println("编号\t费用\t状态");
-                                    for (Object[] Row : Result) {
-                                        int ChargesIdRow = (int) Row[0];
-                                        String ChargesRow = (String) Row[1];
-                                        String StatusRow = (String) Row[2];
-                                        System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
-                                    }
-                                    System.out.print("请选择要操作的编号: ");
-                                    ID = Scanner.nextInt();
-                                    SelectedMenu(ID);
-                                }
+                                ID = Scanner.nextInt();
+                                SelectedMenu(ID);
                             }
                         }
                         break;

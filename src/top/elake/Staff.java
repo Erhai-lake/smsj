@@ -22,11 +22,13 @@ public class Staff {
     public void Menu() {
         boolean Status = true;
         String StaffName;
+        List<Object[]> Result;
         do {
             System.out.println("*** 职员管理 ***");
             System.out.println("1. 新增");
             System.out.println("2. 查询");
-            System.out.println("3. 返回");
+            System.out.println("3. 列出所有");
+            System.out.println("4. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -49,7 +51,7 @@ public class Staff {
                             System.out.println("职员名称不能为空");
                             break;
                         }
-                        List<Object[]> Result = Query(StaffName);
+                        Result = Query(StaffName);
                         if (Result.isEmpty()) {
                             System.out.println("没有找到匹配的数据");
                         } else {
@@ -65,6 +67,23 @@ public class Staff {
                         }
                         break;
                     case 3:
+                        // 列出所有
+                        Result = QueryAll();
+                        if (Result.isEmpty()) {
+                            System.out.println("没有数据");
+                        } else {
+                            System.out.println("编号\t名字");
+                            for (Object[] Row : Result) {
+                                int StaffIdRow = (int) Row[0];
+                                String StaffNameRow = (String) Row[1];
+                                System.out.println(StaffIdRow + "\t" + StaffNameRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            SelectedMenu(ID);
+                        }
+                        break;
+                    case 4:
                         // 返回
                         Status = false;
                         break;
@@ -157,6 +176,24 @@ public class Staff {
             }
         } catch (SQLException e) {
             System.out.println("查询职员时出现错误:" + e.getMessage());
+        }
+        return ResultData;
+    }
+
+    public List<Object[]> QueryAll() {
+        List<Object[]> ResultData = new ArrayList<>();
+        String SQL = "SELECT * FROM Staff";
+        try {
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            while (ResultSet.next()) {
+                Object[] Data = new Object[2];
+                Data[0] = ResultSet.getInt("StaffId");
+                Data[1] = ResultSet.getString("StaffName");
+                ResultData.add(Data);
+            }
+        } catch (SQLException e) {
+            System.out.println("列出职员时出现错误:" + e.getMessage());
         }
         return ResultData;
     }

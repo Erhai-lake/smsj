@@ -55,17 +55,18 @@ public class Registration {
                         if (Result.isEmpty()) {
                             System.out.println("没有找到匹配的数据");
                         } else {
-                            for (Object[] row : Result) {
-                                int RegistrationIdRow = (int) row[0];
-                                String UserNameRow = (String) row[1];
-                                String CellRow = (String) row[2];
-                                String SectionIdRow = (String) row[3];
+                            System.out.println("编号\t名字\t电话号码\t科室号");
+                            for (Object[] Row : Result) {
+                                int RegistrationIdRow = (int) Row[0];
+                                String UserNameRow = (String) Row[1];
+                                String CellRow = (String) Row[2];
+                                String SectionIdRow = (String) Row[3];
                                 System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
                             }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            SelectedMenu(ID);
                         }
-                        System.out.print("请选择要操作的编号: ");
-                        int ID = Scanner.nextInt();
-                        SelectedMenu(ID);
                         break;
                     case 3:
                         // 返回
@@ -160,13 +161,13 @@ public class Registration {
         List<Object[]> ResultData = new ArrayList<>();
         String SQL;
         if (Type) {
-            SQL = "SELECT * FROM Registration WHERE UserName = ?";
+            SQL = "SELECT * FROM Registration WHERE UserName LIKE ?";
         } else {
-            SQL = "SELECT * FROM Registration WHERE Cell = ?";
+            SQL = "SELECT * FROM Registration WHERE Cell LIKE ?";
         }
         try {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
-            PreparedStatement.setString(1, Value);
+            PreparedStatement.setString(1, "%" + Value + "%");
             ResultSet ResultSet = PreparedStatement.executeQuery();
             while (ResultSet.next()) {
                 Object[] Data = new Object[4];

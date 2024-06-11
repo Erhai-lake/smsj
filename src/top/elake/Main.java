@@ -15,11 +15,11 @@ import java.util.Scanner;
  * @描述 入口
  */
 
-// 入口
 public class Main {
     static Scanner Scanner = new Scanner(System.in);
     static Connection MySQLConnection;
 
+    // 入口
     public static void main(String[] args) {
         System.out.println("正在连接数据库,请稍后...");
         MySQLConnection = ConnectToMySQL();

@@ -98,27 +98,38 @@ public class Staff {
     }
 
     // 选中菜单
-    public void SelectedMenu(int ID) {
+    public void SelectedMenu(int Id) {
         boolean Status = true;
         do {
             System.out.println("*** 操作 ***");
             System.out.println("1. 删除");
-            System.out.println("2. 重新选择");
-            System.out.println("3. 返回");
+            System.out.println("2. 修改");
+            System.out.println("3. 重新选择");
+            System.out.println("4. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
                 switch (Input) {
                     case 1:
                         // 删除
-                        Status = Delete(ID);
+                        Status = Delete(Id);
                         break;
                     case 2:
-                        // 重新选择
-                        System.out.print("请选择要操作的编号: ");
-                        ID = Scanner.nextInt();
+                        // 修改
+                        System.out.print("请输入职员名称: ");
+                        String StaffName = Scanner.next();
+                        if (StaffName.isEmpty()) {
+                            System.out.println("职员名称不能为空");
+                            break;
+                        }
+                        Status = Modify(StaffName, Id);
                         break;
                     case 3:
+                        // 重新选择
+                        System.out.print("请选择要操作的编号: ");
+                        Id = Scanner.nextInt();
+                        break;
+                    case 4:
                         // 返回
                         Status = false;
                         break;
@@ -156,6 +167,22 @@ public class Staff {
             return false;
         } catch (SQLException e) {
             System.out.println("删除职员时出现错误:" + e.getMessage());
+            return true;
+        }
+    }
+
+    // 修改
+    public Boolean Modify(String StaffName, int StaffId) {
+        try {
+            String SQL = "UPDATE Staff SET StaffName = ? WHERE StaffId = ?";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setString(1, StaffName);
+            PreparedStatement.setInt(2, StaffId);
+            PreparedStatement.executeUpdate();
+            System.out.println("职员修改成功");
+            return false;
+        } catch (SQLException e) {
+            System.out.println("修改职员时出现错误:" + e.getMessage());
             return true;
         }
     }

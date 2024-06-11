@@ -23,6 +23,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("正在连接数据库,请稍后...");
         MySQLConnection = ConnectToMySQL();
+        System.out.println("连接成功");
         // 主菜单
         boolean Status = true;
         do {
@@ -97,6 +98,8 @@ public class Main {
             Connection = DriverManager.getConnection("jdbc:mysql://" + Config("MySQLHostName") + ":" + Config("MySQLPort") + "/" + Config("MySQLDatabase"), Config("MySQLUserName"), Config("MySQLPassword"));
         } catch (SQLException e) {
             System.out.println("无法连接到MySQL数据库:" + e.getMessage());
+            System.out.println("系统已终止");
+            System.exit(0);
         }
         return Connection;
     }

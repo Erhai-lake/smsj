@@ -122,27 +122,61 @@ public class Registration {
     }
 
     // 选中菜单
-    public void SelectedMenu(int ID) {
+    public void SelectedMenu(int Id) {
         boolean Status = true;
         do {
             System.out.println("*** 操作 ***");
             System.out.println("1. 删除");
-            System.out.println("2. 重新选择");
-            System.out.println("3. 返回");
+            System.out.println("2. 修改");
+            System.out.println("3. 重新选择");
+            System.out.println("4. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
                 switch (Input) {
                     case 1:
                         // 删除
-                        Status = Delete(ID);
+                        Status = Delete(Id);
                         break;
                     case 2:
-                        // 重新选择
-                        System.out.print("请选择要操作的编号: ");
-                        ID = Scanner.nextInt();
+                        // 修改
+                        System.out.print("请输入用户名: ");
+                        String UserName = Scanner.next();
+                        System.out.print("请输入电话号码: ");
+                        String Cell = Scanner.next();
+                        if (UserName.isEmpty() || Cell.isEmpty()) {
+                            System.out.println("用户名或电话号码不能为空");
+                            break;
+                        }
+                        System.out.print("请输入你要挂号的科室名称(支持模糊搜索): ");
+                        String SectionName = Scanner.next();
+                        if (SectionName.isEmpty()) {
+                            System.out.println("科室名称不能为空");
+                            break;
+                        }
+                        Section Section = new Section();
+                        List<Object[]> Result = Section.Query(SectionName);
+                        if (Result.isEmpty()) {
+                            System.out.println("没有找到匹配的数据");
+                        } else {
+                            System.out.println("编号\t名字\t职员");
+                            for (Object[] Row : Result) {
+                                int SectionIdRow = (int) Row[0];
+                                String SectionNameRow = (String) Row[1];
+                                String StaffNameRow = (String) Row[2];
+                                System.out.println(SectionIdRow + "\t" + SectionNameRow + "\t" + StaffNameRow);
+                            }
+                            System.out.print("请选择要修改挂号的科室的编号: ");
+                            int SectionId = Scanner.nextInt();
+                            Status = Modify(UserName, Cell, SectionId, Id);
+                        }
                         break;
                     case 3:
+                        // 重新选择
+                        System.out.print("请选择要操作的编号: ");
+                        Id = Scanner.nextInt();
+                        break;
+                    case 4:
                         // 返回
                         Status = false;
                         break;
@@ -191,6 +225,24 @@ public class Registration {
             return false;
         } catch (SQLException e) {
             System.out.println("删除挂号时出现错误:" + e.getMessage());
+            return true;
+        }
+    }
+
+    // 修改
+    public Boolean Modify(String UserName, String Cell,int SectionId, int RegistrationId) {
+        try {
+            String SQL = "UPDATE Registration SET UserName = ?, Cell = ?, SectionId =? WHERE RegistrationId = ?";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setString(1, UserName);
+            PreparedStatement.setString(2, Cell);
+            PreparedStatement.setInt(3, SectionId);
+            PreparedStatement.setInt(4, RegistrationId);
+            PreparedStatement.executeUpdate();
+            System.out.println("挂号修改成功");
+            return false;
+        } catch (SQLException e) {
+            System.out.println("修改挂号时出现错误:" + e.getMessage());
             return true;
         }
     }

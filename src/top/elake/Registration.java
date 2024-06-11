@@ -1,11 +1,7 @@
 package top.elake;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.sql.*;
+import java.util.*;
 
 import static top.elake.Main.MySQLConnection;
 
@@ -55,7 +51,18 @@ public class Registration {
                             System.out.println("名称或电话号码不能为空");
                             break;
                         }
-                        Query(UserName, !UserName.matches("[0-9]+"));
+                        List<Object[]> Result = Query(UserName, !UserName.matches("[0-9]+"));
+                        if (Result.isEmpty()) {
+                            System.out.println("没有找到匹配的数据");
+                        } else {
+                            for (Object[] row : Result) {
+                                int RegistrationIdRow = (int) row[0];
+                                String UserNameRow = (String) row[1];
+                                String CellRow = (String) row[2];
+                                String SectionIdRow = (String) row[3];
+                                System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
+                            }
+                        }
                         System.out.print("请选择要操作的编号: ");
                         int ID = Scanner.nextInt();
                         SelectedMenu(ID);
@@ -149,7 +156,8 @@ public class Registration {
     }
 
     // 查询
-    public void Query(String Value, Boolean Type) {
+    public List<Object[]> Query(String Value, Boolean Type) {
+        List<Object[]> ResultData = new ArrayList<>();
         String SQL;
         if (Type) {
             SQL = "SELECT * FROM Registration WHERE UserName = ?";
@@ -160,16 +168,17 @@ public class Registration {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
             PreparedStatement.setString(1, Value);
             ResultSet ResultSet = PreparedStatement.executeQuery();
-            if (!ResultSet.next()) {
-                System.out.println("没有找到匹配的数据");
-            } else {
-                System.out.println("编号\t名称\t电话号码\t科室");
-                do {
-                    System.out.println(ResultSet.getInt("RegistrationId") + "\t" + ResultSet.getString("UserName") + "\t" + ResultSet.getString("Cell") + "\t" + ResultSet.getString("SectionId"));
-                } while (ResultSet.next());
+            while (ResultSet.next()) {
+                Object[] Data = new Object[4];
+                Data[0] = ResultSet.getInt("RegistrationId");
+                Data[1] = ResultSet.getString("UserName");
+                Data[2] = ResultSet.getString("Cell");
+                Data[3] = ResultSet.getString("SectionId");
+                ResultData.add(Data);
             }
         } catch (SQLException e) {
             System.out.println("查询挂号时出现错误:" + e.getMessage());
         }
+        return ResultData;
     }
 }

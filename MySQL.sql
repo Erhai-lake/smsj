@@ -35,7 +35,6 @@ CREATE TABLE `Staff`
 (
     `StaffId`   INT          NOT NULL AUTO_INCREMENT COMMENT '职员ID',
     `StaffName` VARCHAR(255) NOT NULL COMMENT '职员名称',
-    `Time`      Time         NOT NULL COMMENT '职员上班时间',
     PRIMARY KEY (`StaffId`)
 ) COMMENT = '职员表';
 

@@ -1,7 +1,14 @@
 package top.elake;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+
+import static top.elake.Main.MySQLConnection;
 
 /**
  * @作者 Erhai_lake
@@ -14,6 +21,7 @@ public class Staff {
     // 菜单
     public void Menu() {
         boolean Status = true;
+        String StaffName;
         do {
             System.out.println("*** 职员管理 ***");
             System.out.println("1. 新增");
@@ -25,9 +33,36 @@ public class Staff {
                 switch (Input) {
                     case 1:
                         // 新增
+                        System.out.print("请输入职员名称: ");
+                        StaffName = Scanner.next();
+                        if (StaffName.isEmpty()) {
+                            System.out.println("职员名称不能为空");
+                            break;
+                        }
+                        New(StaffName);
                         break;
                     case 2:
                         // 查询
+                        System.out.print("请输入你要查询的职员名称(支持模糊搜索): ");
+                        StaffName = Scanner.next();
+                        if (StaffName.isEmpty()) {
+                            System.out.println("职员名称不能为空");
+                            break;
+                        }
+                        List<Object[]> Result = Query(StaffName);
+                        if (Result.isEmpty()) {
+                            System.out.println("没有找到匹配的数据");
+                        } else {
+                            System.out.println("编号\t名字");
+                            for (Object[] Row : Result) {
+                                int StaffIdRow = (int) Row[0];
+                                String StaffNameRow = (String) Row[1];
+                                System.out.println(StaffIdRow + "\t" + StaffNameRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            SelectedMenu(ID);
+                        }
                         break;
                     case 3:
                         // 返回
@@ -41,5 +76,88 @@ public class Staff {
                 Scanner.nextLine();
             }
         } while (Status);
+    }
+
+    // 选中菜单
+    public void SelectedMenu(int ID) {
+        boolean Status = true;
+        do {
+            System.out.println("*** 操作 ***");
+            System.out.println("1. 删除");
+            System.out.println("2. 重新选择");
+            System.out.println("3. 返回");
+            System.out.print("请输入对应的操作编号: ");
+            try {
+                int Input = Scanner.nextInt();
+                switch (Input) {
+                    case 1:
+                        // 删除
+                        Status = Delete(ID);
+                        break;
+                    case 2:
+                        // 重新选择
+                        System.out.print("请选择要操作的编号: ");
+                        ID = Scanner.nextInt();
+                        break;
+                    case 3:
+                        // 返回
+                        Status = false;
+                        break;
+                    default:
+                        System.out.println("输入有误,请重新输入");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("输入有误,请重新输入");
+                Scanner.nextLine();
+            }
+        } while (Status);
+    }
+
+    // 新增
+    public void New(String StaffName) {
+        try {
+            String SQL = "INSERT INTO Staff (StaffName) VALUES (?)";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setString(1, StaffName);
+            PreparedStatement.executeUpdate();
+            System.out.println("新增职员成功");
+        } catch (SQLException e) {
+            System.out.println("新增职员时出现错误:" + e.getMessage());
+        }
+    }
+
+    // 删除
+    public Boolean Delete(int StaffId) {
+        try {
+            String SQL = "DELETE FROM Staff WHERE StaffId = ?";
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setInt(1, StaffId);
+            PreparedStatement.executeUpdate();
+            System.out.println("职员删除成功");
+            return false;
+        } catch (SQLException e) {
+            System.out.println("删除职员时出现错误:" + e.getMessage());
+            return true;
+        }
+    }
+
+    // 查询
+    public List<Object[]> Query(String StaffName) {
+        List<Object[]> ResultData = new ArrayList<>();
+        String SQL = "SELECT * FROM Staff WHERE StaffName LIKE ?";
+        try {
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            PreparedStatement.setString(1, "%" + StaffName + "%");
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            while (ResultSet.next()) {
+                Object[] Data = new Object[2];
+                Data[0] = ResultSet.getInt("StaffId");
+                Data[1] = ResultSet.getString("StaffName");
+                ResultData.add(Data);
+            }
+        } catch (SQLException e) {
+            System.out.println("查询职员时出现错误:" + e.getMessage());
+        }
+        return ResultData;
     }
 }

@@ -21,10 +21,13 @@ public class Charges {
     // 菜单
     public void Menu() {
         boolean Status = true;
+        int RegistrationId;
+        List<Object[]> Result;
         do {
             System.out.println("*** 收费管理 ***");
             System.out.println("1. 查询");
-            System.out.println("2. 返回");
+            System.out.println("2. 列出所有");
+            System.out.println("3. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -38,7 +41,7 @@ public class Charges {
                             break;
                         }
                         Registration Registration = new Registration();
-                        List<Object[]> Result = Registration.Query(Value, !Value.matches("[0-9]+"));
+                        Result = Registration.Query(Value, !Value.matches("[0-9]+"));
                         if (Result.isEmpty()) {
                             System.out.println("没有找到匹配的数据");
                         } else {
@@ -51,8 +54,8 @@ public class Charges {
                                 System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
                             }
                             System.out.print("请选择要操作的编号: ");
-                            int ID = Scanner.nextInt();
-                            Result = Query(ID);
+                            RegistrationId = Scanner.nextInt();
+                            Result = Query(RegistrationId);
                             if (Result.isEmpty()) {
                                 System.out.println("没有找到匹配的数据");
                             } else {
@@ -64,12 +67,30 @@ public class Charges {
                                     System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
                                 }
                                 System.out.print("请选择要操作的编号: ");
-                                ID = Scanner.nextInt();
-                                SelectedMenu(ID);
+                                RegistrationId = Scanner.nextInt();
+                                SelectedMenu(RegistrationId);
                             }
                         }
                         break;
                     case 2:
+                        // 列出所有
+                        Result = QueryAll();
+                        if (Result.isEmpty()) {
+                            System.out.println("没有数据");
+                        } else {
+                            System.out.println("编号\t费用\t状态");
+                            for (Object[] Row : Result) {
+                                int ChargesIdRow = (int) Row[0];
+                                String ChargesRow = (String) Row[1];
+                                String StatusRow = (String) Row[2];
+                                System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            RegistrationId = Scanner.nextInt();
+                            SelectedMenu(RegistrationId);
+                        }
+                        break;
+                    case 3:
                         // 返回
                         Status = false;
                         break;
@@ -198,4 +219,28 @@ public class Charges {
         }
         return ResultData;
     }
+
+    public List<Object[]> QueryAll() {
+        List<Object[]> ResultData = new ArrayList<>();
+        String SQL = "SELECT * FROM Charges";
+        try {
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            while (ResultSet.next()) {
+                Object[] Data = new Object[3];
+                Data[0] = ResultSet.getInt("ChargesId");
+                Data[1] = ResultSet.getString("Charges");
+                if (ResultSet.getString("Status").equals("0")) {
+                    Data[2] = "已缴费";
+                } else {
+                    Data[2] = "未缴费";
+                }
+                ResultData.add(Data);
+            }
+        } catch (SQLException e) {
+            System.out.println("列出费用时出现错误:" + e.getMessage());
+        }
+        return ResultData;
+    }
+
 }

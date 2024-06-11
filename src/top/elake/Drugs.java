@@ -3,7 +3,9 @@ package top.elake;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import static top.elake.Main.MySQLConnection;
@@ -50,10 +52,21 @@ public class Drugs {
                             System.out.println("药品名不能为空");
                             break;
                         }
-                        Query(DrugsName);
-                        System.out.print("请选择要操作的编号: ");
-                        int ID = Scanner.nextInt();
-                        SelectedMenu(ID);
+                        List<Object[]> Result = Query(DrugsName);
+                        if (Result.isEmpty()) {
+                            System.out.println("没有找到匹配的数据");
+                        } else {
+                            System.out.println("编号\t名称\t价格");
+                            for (Object[] Row : Result) {
+                                int DrugsIdRow = (int) Row[0];
+                                String DrugsNameRow = (String) Row[1];
+                                String DrugsChargesRow = (String) Row[2];
+                                System.out.println(DrugsIdRow + "\t" + DrugsNameRow + "\t" + DrugsChargesRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            SelectedMenu(ID);
+                        }
                         break;
                     case 3:
                         // 返回
@@ -88,13 +101,7 @@ public class Drugs {
                         break;
                     case 2:
                         // 开药
-                        System.out.print("请输入你要查询的名称或电话号码: ");
-                        String Value = Scanner.next();
-                        if (Value.isEmpty()) {
-                            System.out.println("名称或电话号码不能为空");
-                            break;
-                        }
-                        Status = PrescribeMedicine(Value, !Value.matches("[0-9]+"), ID);
+                        Status = PrescribeMedicine(ID);
                         break;
                     case 3:
                         // 重新选择
@@ -130,15 +137,34 @@ public class Drugs {
     }
 
     // 开药
-    public Boolean PrescribeMedicine(String Value, Boolean Type, int DrugsId) {
-        Registration Registration = new Registration();
-        Registration.Query(Value, Type);
-        System.out.print("你要给谁开药: ");
-        int ID = Scanner.nextInt();
-        Charges Charges = new Charges();
-        Charges.Modify(ID, DrugsId);
-        System.out.println("开药成功");
-        return false;
+    public Boolean PrescribeMedicine(int DrugsId) {
+        System.out.print("请输入你要查询的名称或电话号码(支持模糊搜索): ");
+        String Value = Scanner.next();
+        if (Value.isEmpty()) {
+            System.out.println("名称或电话号码不能为空");
+        } else {
+            Registration Registration = new Registration();
+            List<Object[]> Result = Registration.Query(Value, !Value.matches("[0-9]+"));
+            if (Result.isEmpty()) {
+                System.out.println("没有找到匹配的数据");
+            } else {
+                System.out.println("编号\t名字\t电话号码\t科室号");
+                for (Object[] Row : Result) {
+                    int RegistrationIdRow = (int) Row[0];
+                    String UserNameRow = (String) Row[1];
+                    String CellRow = (String) Row[2];
+                    String SectionIdRow = (String) Row[3];
+                    System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
+                }
+                System.out.print("请选择要操作的编号: ");
+                int ID = Scanner.nextInt();
+                Charges Charges = new Charges();
+                Charges.Modify(ID, DrugsId);
+                System.out.println("开药成功");
+                return false;
+            }
+        }
+        return true;
     }
 
     // 删除
@@ -157,7 +183,8 @@ public class Drugs {
     }
 
     // 查询
-    public void Query(String Value) {
+    public List<Object[]> Query(String Value) {
+        List<Object[]> ResultData = new ArrayList<>();
         String SQL = "SELECT * FROM Drugs WHERE DrugsName LIKE ?";
         try {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
@@ -166,13 +193,17 @@ public class Drugs {
             if (!ResultSet.next()) {
                 System.out.println("没有找到匹配的数据");
             } else {
-                System.out.println("编号\t名称\t价格");
-                do {
-                    System.out.println(ResultSet.getInt("DrugsId") + "\t" + ResultSet.getString("DrugsName") + "\t" + ResultSet.getString("DrugsCharges"));
-                } while (ResultSet.next());
+                while (ResultSet.next()) {
+                    Object[] Data = new Object[3];
+                    Data[0] = ResultSet.getInt("DrugsId");
+                    Data[1] = ResultSet.getString("DrugsName");
+                    Data[2] = ResultSet.getString("DrugsCharges");
+                    ResultData.add(Data);
+                }
             }
         } catch (SQLException e) {
             System.out.println("查询药品时出现错误:" + e.getMessage());
         }
+        return ResultData;
     }
 }

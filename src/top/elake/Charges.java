@@ -3,7 +3,9 @@ package top.elake;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import static top.elake.Main.MySQLConnection;
@@ -19,7 +21,6 @@ public class Charges {
     // 菜单
     public void Menu() {
         boolean Status = true;
-        String UserName;
         do {
             System.out.println("*** 收费管理 ***");
             System.out.println("1. 查询");
@@ -31,15 +32,42 @@ public class Charges {
                     case 1:
                         // 查询
                         System.out.print("请输入你要查询的名称或电话号码: ");
-                        UserName = Scanner.next();
-                        if (UserName.isEmpty()) {
+                        String Value = Scanner.next();
+                        if (Value.isEmpty()) {
                             System.out.println("名称或电话号码不能为空");
-                            break;
+                        } else {
+                            Registration Registration = new Registration();
+                            List<Object[]> Result = Registration.Query(Value, !Value.matches("[0-9]+"));
+                            if (Result.isEmpty()) {
+                                System.out.println("没有找到匹配的数据");
+                            } else {
+                                System.out.println("编号\t名字\t电话号码\t科室号");
+                                for (Object[] Row : Result) {
+                                    int RegistrationIdRow = (int) Row[0];
+                                    String UserNameRow = (String) Row[1];
+                                    String CellRow = (String) Row[2];
+                                    String SectionIdRow = (String) Row[3];
+                                    System.out.println(RegistrationIdRow + "\t" + UserNameRow + "\t" + CellRow + "\t" + SectionIdRow);
+                                }
+                                System.out.print("请选择要操作的编号: ");
+                                int ID = Scanner.nextInt();
+                                Result = Query(ID);
+                                if (Result.isEmpty()) {
+                                    System.out.println("没有找到匹配的数据");
+                                } else {
+                                    System.out.println("编号\t费用\t状态");
+                                    for (Object[] Row : Result) {
+                                        int ChargesIdRow = (int) Row[0];
+                                        String ChargesRow = (String) Row[1];
+                                        String StatusRow = (String) Row[2];
+                                        System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
+                                    }
+                                    System.out.print("请选择要操作的编号: ");
+                                    ID = Scanner.nextInt();
+                                    SelectedMenu(ID);
+                                }
+                            }
                         }
-                        Query(UserName, !UserName.matches("[0-9]+"));
-                        System.out.print("请选择要操作的编号: ");
-                        int ID = Scanner.nextInt();
-                        SelectedMenu(ID);
                         break;
                     case 2:
                         // 返回
@@ -147,30 +175,27 @@ public class Charges {
     }
 
     // 查询
-    public void Query(String Value, Boolean Type) {
-        Registration Registration = new Registration();
-        Registration.Query(Value, Type);
-        System.out.print("请选择要查询的编号: ");
-        int ID = Scanner.nextInt();
+    public List<Object[]> Query(int RegistrationId) {
+        List<Object[]> ResultData = new ArrayList<>();
         String SQL = "SELECT * FROM Charges WHERE RegistrationId = ?";
         try {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
-            PreparedStatement.setInt(1, ID);
+            PreparedStatement.setInt(1, RegistrationId);
             ResultSet ResultSet = PreparedStatement.executeQuery();
-            if (!ResultSet.next()) {
-                System.out.println("没有找到匹配的数据");
-            } else {
-                System.out.println("编号\t费用\t缴费状态");
-                do {
-                    if (ResultSet.getString("Status").equals("0")) {
-                        System.out.println(ResultSet.getInt("ChargesId") + "\t" + ResultSet.getString("Charges") + "\t" + "已缴费");
-                    } else {
-                        System.out.println(ResultSet.getInt("ChargesId") + "\t" + ResultSet.getString("Charges") + "\t" + "未缴费");
-                    }
-                } while (ResultSet.next());
+            while (ResultSet.next()) {
+                Object[] Data = new Object[3];
+                Data[0] = ResultSet.getInt("ChargesId");
+                Data[1] = ResultSet.getString("Charges");
+                if (ResultSet.getString("Status").equals("0")) {
+                    Data[2] = "已缴费";
+                } else {
+                    Data[2] = "未缴费";
+                }
+                ResultData.add(Data);
             }
         } catch (SQLException e) {
             System.out.println("查询费用时出现错误:" + e.getMessage());
         }
+        return ResultData;
     }
 }

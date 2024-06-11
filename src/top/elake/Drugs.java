@@ -23,11 +23,13 @@ public class Drugs {
         boolean Status = true;
         String DrugsName;
         String DrugsCharges;
+        List<Object[]> Result;
         do {
             System.out.println("*** 药品管理 ***");
             System.out.println("1. 新增");
             System.out.println("2. 查询");
-            System.out.println("3. 返回");
+            System.out.println("3. 列出所有");
+            System.out.println("4. 返回");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -52,7 +54,7 @@ public class Drugs {
                             System.out.println("药品名不能为空");
                             break;
                         }
-                        List<Object[]> Result = Query(DrugsName);
+                        Result = Query(DrugsName);
                         if (Result.isEmpty()) {
                             System.out.println("没有找到匹配的数据");
                         } else {
@@ -69,6 +71,24 @@ public class Drugs {
                         }
                         break;
                     case 3:
+                        // 列出所有
+                        Result = QueryAll();
+                        if (Result.isEmpty()) {
+                            System.out.println("没有数据");
+                        } else {
+                            System.out.println("编号\t名称\t价格");
+                            for (Object[] Row : Result) {
+                                int DrugsIdRow = (int) Row[0];
+                                String DrugsNameRow = (String) Row[1];
+                                String DrugsChargesRow = (String) Row[2];
+                                System.out.println(DrugsIdRow + "\t" + DrugsNameRow + "\t" + DrugsChargesRow);
+                            }
+                            System.out.print("请选择要操作的编号: ");
+                            int ID = Scanner.nextInt();
+                            SelectedMenu(ID);
+                        }
+                        break;
+                    case 4:
                         // 返回
                         Status = false;
                         break;
@@ -203,6 +223,29 @@ public class Drugs {
             }
         } catch (SQLException e) {
             System.out.println("查询药品时出现错误:" + e.getMessage());
+        }
+        return ResultData;
+    }
+
+    public List<Object[]> QueryAll() {
+        List<Object[]> ResultData = new ArrayList<>();
+        String SQL = "SELECT * FROM Drugs";
+        try {
+            PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
+            ResultSet ResultSet = PreparedStatement.executeQuery();
+            if (!ResultSet.next()) {
+                System.out.println("没有数据");
+            } else {
+                while (ResultSet.next()) {
+                    Object[] Data = new Object[3];
+                    Data[0] = ResultSet.getInt("DrugsId");
+                    Data[1] = ResultSet.getString("DrugsName");
+                    Data[2] = ResultSet.getString("DrugsCharges");
+                    ResultData.add(Data);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("列出药品时出现错误:" + e.getMessage());
         }
         return ResultData;
     }

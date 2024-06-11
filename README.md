@@ -38,7 +38,7 @@
 1. 挂号表:Registration(RegistrationId, UserName, Cell, SectionId)
 2. 收费表:Charges(ChargesId, RegistrationId, Charges, Status)
 3. 药品表:Drugs(DrugsId, DrugsName, DrugsCharges)
-4. 职员表:Staff(StaffId, StaffName, Time)
+4. 职员表:Staff(StaffId, StaffName)
 5. 科室表:Section(SectionId, SectionName, StaffId)
 6. SQL表见`MySQL.sql`文件
 

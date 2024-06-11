@@ -30,6 +30,12 @@ CREATE TABLE `Drugs`
     PRIMARY KEY (`DrugsId`)
 ) COMMENT = '药品表';
 
+INSERT INTO Drugs (DrugsName, DrugsCharges)
+VALUES ('999抗病毒口服液', '19.9'),
+       ('999感冒灵颗粒', '27.9'),
+       ('小柴胡颗粒', '29.9');
+
+
 -- 职员表
 CREATE TABLE `Staff`
 (
@@ -37,6 +43,10 @@ CREATE TABLE `Staff`
     `StaffName` VARCHAR(255) NOT NULL COMMENT '职员名称',
     PRIMARY KEY (`StaffId`)
 ) COMMENT = '职员表';
+
+INSERT INTO Staff (StaffName)
+VALUES ('张三'),
+       ('李四');
 
 -- 科室表
 CREATE TABLE `Section`
@@ -47,3 +57,7 @@ CREATE TABLE `Section`
     PRIMARY KEY (`SectionId`),
     CONSTRAINT `Section_StaffId` FOREIGN KEY (`StaffId`) REFERENCES `Staff` (`StaffId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT = '科室表';
+
+INSERT INTO Section (SectionName, StaffId)
+VALUES ('诊室1', 1),
+       ('诊室2', 2);

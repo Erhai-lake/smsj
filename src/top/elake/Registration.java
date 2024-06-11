@@ -18,7 +18,8 @@ public class Registration {
         boolean Status = true;
         String UserName;
         String Cell;
-        int SectionId;
+        String SectionName;
+        List<Object[]> Result;
         do {
             System.out.println("*** 挂号管理 ***");
             System.out.println("1. 新增");
@@ -38,10 +39,28 @@ public class Registration {
                             System.out.println("用户名或电话号码不能为空");
                             break;
                         }
-                        // 等科室写完,这里写一个选择科室的
-                        SectionId = 1;
-                        // 暂时使用1
-                        New(UserName, Cell, SectionId);
+                        System.out.print("请输入你要挂号的科室名称(支持模糊搜索): ");
+                        SectionName = Scanner.next();
+                        if (SectionName.isEmpty()) {
+                            System.out.println("科室名称不能为空");
+                            break;
+                        }
+                        Section Section = new Section();
+                        Result = Section.Query(SectionName);
+                        if (Result.isEmpty()) {
+                            System.out.println("没有找到匹配的数据");
+                        } else {
+                            System.out.println("编号\t名字\t职员");
+                            for (Object[] Row : Result) {
+                                int SectionIdRow = (int) Row[0];
+                                String SectionNameRow = (String) Row[1];
+                                String StaffNameRow = (String) Row[2];
+                                System.out.println(SectionIdRow + "\t" + SectionNameRow + "\t" + StaffNameRow);
+                            }
+                            System.out.print("请选择要挂号的科室的编号: ");
+                            int ID = Scanner.nextInt();
+                            New(UserName, Cell, ID);
+                        }
                         break;
                     case 2:
                         // 查询
@@ -51,7 +70,7 @@ public class Registration {
                             System.out.println("名称或电话号码不能为空");
                             break;
                         }
-                        List<Object[]> Result = Query(UserName, !UserName.matches("[0-9]+"));
+                        Result = Query(UserName, !UserName.matches("[0-9]+"));
                         if (Result.isEmpty()) {
                             System.out.println("没有找到匹配的数据");
                         } else {

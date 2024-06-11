@@ -1,12 +1,7 @@
 package top.elake;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.sql.*;
+import java.util.*;
 
 import static top.elake.Main.MySQLConnection;
 

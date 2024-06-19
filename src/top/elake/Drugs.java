@@ -258,16 +258,12 @@ public class Drugs {
         try {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
             ResultSet ResultSet = PreparedStatement.executeQuery();
-            if (!ResultSet.next()) {
-                System.out.println("没有数据");
-            } else {
-                while (ResultSet.next()) {
-                    Object[] Data = new Object[3];
-                    Data[0] = ResultSet.getInt("DrugsId");
-                    Data[1] = ResultSet.getString("DrugsName");
-                    Data[2] = ResultSet.getString("DrugsCharges");
-                    ResultData.add(Data);
-                }
+            while (ResultSet.next()) {
+                Object[] Data = new Object[3];
+                Data[0] = ResultSet.getInt("DrugsId");
+                Data[1] = ResultSet.getString("DrugsName");
+                Data[2] = ResultSet.getString("DrugsCharges");
+                ResultData.add(Data);
             }
         } catch (SQLException e) {
             System.out.println("列出药品时出现错误:" + e.getMessage());

@@ -237,5 +237,4 @@ public class Charges {
         }
         return ResultData;
     }
-
 }

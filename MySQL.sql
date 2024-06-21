@@ -9,6 +9,14 @@ CREATE TABLE `Registration`
     `SectionId`      INT(255) COMMENT '科室ID',
     PRIMARY KEY (`RegistrationId`)
 ) COMMENT = '挂号表';
+INSERT INTO Registration (RegistrationId, UserName, Cell, SectionId)
+VALUES (1, '小本', '12345678900', 1),
+       (2, '小天', '114514', 2),
+       (3, '牢大', '01110010', 1),
+       (4, '大佐', '000101010101', 1),
+       (5, 'Xekr', '0110', 2),
+       (6, 'fufu', '010', 1),
+       (7, '柒月', '1919810', 1);
 
 -- 收费表
 CREATE TABLE `Charges`
@@ -20,6 +28,14 @@ CREATE TABLE `Charges`
     PRIMARY KEY (`ChargesId`),
     CONSTRAINT `Charges_RegistrationId` FOREIGN KEY (`RegistrationId`) REFERENCES `Registration` (`RegistrationId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) COMMENT = '收费表';
+INSERT INTO Charges (ChargesId, RegistrationId, Charges, Status)
+VALUES (1, 1, '16', 1),
+       (2, 2, '16', 1),
+       (3, 3, '16', 1),
+       (4, 4, '16', 1),
+       (5, 5, '16', 2),
+       (6, 6, '16', 1),
+       (7, 7, '16', 1);
 
 -- 药品表
 CREATE TABLE `Drugs`

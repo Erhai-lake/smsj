@@ -28,7 +28,8 @@ public class Main {
             System.out.println("3. 药品管理");
             System.out.println("4. 职员管理");
             System.out.println("5. 科室管理");
-            System.out.println("6. 退出");
+            System.out.println("6. 重新连接数据库");
+            System.out.println("7. 退出");
             System.out.print("请输入对应的操作编号: ");
             try {
                 int Input = Scanner.nextInt();
@@ -59,6 +60,12 @@ public class Main {
                         Section.Menu();
                         break;
                     case 6:
+                        // 重新连接数据库
+                        System.out.println("正在连接数据库,请稍后...");
+                        MySQLConnection = ConnectToMySQL();
+                        System.out.println("连接成功");
+                        break;
+                    case 7:
                         // 退出
                         Status = false;
                         break;

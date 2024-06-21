@@ -54,12 +54,13 @@ public class Charges {
                             if (Result.isEmpty()) {
                                 System.out.println("没有找到匹配的数据");
                             } else {
-                                System.out.println("编号\t费用\t状态");
+                                System.out.println("编号\t名称\t费用\t状态");
                                 for (Object[] Row : Result) {
                                     int ChargesIdRow = (int) Row[0];
-                                    String ChargesRow = (String) Row[1];
-                                    String StatusRow = (String) Row[2];
-                                    System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
+                                    String UserNameRow = (String) Row[1];
+                                    String ChargesRow = (String) Row[2];
+                                    String StatusRow = (String) Row[3];
+                                    System.out.println(ChargesIdRow + "\t" + UserNameRow + "\t" + ChargesRow + "\t" + StatusRow);
                                 }
                                 System.out.print("请选择要操作的编号: ");
                                 RegistrationId = Scanner.nextInt();
@@ -73,12 +74,13 @@ public class Charges {
                         if (Result.isEmpty()) {
                             System.out.println("没有数据");
                         } else {
-                            System.out.println("编号\t费用\t状态");
+                            System.out.println("编号\t名称\t费用\t状态");
                             for (Object[] Row : Result) {
                                 int ChargesIdRow = (int) Row[0];
-                                String ChargesRow = (String) Row[1];
-                                String StatusRow = (String) Row[2];
-                                System.out.println(ChargesIdRow + "\t" + ChargesRow + "\t" + StatusRow);
+                                String UserNameRow = (String) Row[1];
+                                String ChargesRow = (String) Row[2];
+                                String StatusRow = (String) Row[3];
+                                System.out.println(ChargesIdRow + "\t" + UserNameRow + "\t" + ChargesRow + "\t" + StatusRow);
                             }
                             System.out.print("请选择要操作的编号: ");
                             RegistrationId = Scanner.nextInt();
@@ -193,19 +195,26 @@ public class Charges {
     // 查询
     public List<Object[]> Query(int RegistrationId) {
         List<Object[]> ResultData = new ArrayList<>();
-        String SQL = "SELECT * FROM Charges WHERE RegistrationId = ?";
+        String SQL;
+        SQL = "SELECT * FROM Charges WHERE RegistrationId = ?";
         try {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
             PreparedStatement.setInt(1, RegistrationId);
             ResultSet ResultSet = PreparedStatement.executeQuery();
             while (ResultSet.next()) {
-                Object[] Data = new Object[3];
+                SQL = "SELECT * FROM Registration WHERE RegistrationId = ?";
+                PreparedStatement = MySQLConnection.prepareStatement(SQL);
+                PreparedStatement.setString(1, ResultSet.getString("RegistrationId"));
+                ResultSet ResultSetRegistration = PreparedStatement.executeQuery();
+                ResultSetRegistration.next();
+                Object[] Data = new Object[4];
                 Data[0] = ResultSet.getInt("ChargesId");
-                Data[1] = ResultSet.getString("Charges");
+                Data[1] = ResultSetRegistration.getString("UserName");
+                Data[2] = ResultSet.getString("Charges");
                 if (ResultSet.getString("Status").equals("0")) {
-                    Data[2] = "已缴费";
+                    Data[3] = "已缴费";
                 } else {
-                    Data[2] = "未缴费";
+                    Data[3] = "未缴费";
                 }
                 ResultData.add(Data);
             }
@@ -217,18 +226,25 @@ public class Charges {
 
     public List<Object[]> QueryAll() {
         List<Object[]> ResultData = new ArrayList<>();
-        String SQL = "SELECT * FROM Charges";
+        String SQL;
+        SQL = "SELECT * FROM Charges";
         try {
             PreparedStatement PreparedStatement = MySQLConnection.prepareStatement(SQL);
             ResultSet ResultSet = PreparedStatement.executeQuery();
             while (ResultSet.next()) {
-                Object[] Data = new Object[3];
+                SQL = "SELECT * FROM Registration WHERE RegistrationId = ?";
+                PreparedStatement = MySQLConnection.prepareStatement(SQL);
+                PreparedStatement.setString(1, ResultSet.getString("RegistrationId"));
+                ResultSet ResultSetRegistration = PreparedStatement.executeQuery();
+                ResultSetRegistration.next();
+                Object[] Data = new Object[4];
                 Data[0] = ResultSet.getInt("ChargesId");
-                Data[1] = ResultSet.getString("Charges");
+                Data[1] = ResultSetRegistration.getString("UserName");
+                Data[2] = ResultSet.getString("Charges");
                 if (ResultSet.getString("Status").equals("0")) {
-                    Data[2] = "已缴费";
+                    Data[3] = "已缴费";
                 } else {
-                    Data[2] = "未缴费";
+                    Data[3] = "未缴费";
                 }
                 ResultData.add(Data);
             }

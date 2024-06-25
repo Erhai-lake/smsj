@@ -64,7 +64,13 @@ public class Charges {
                                 }
                                 System.out.print("请选择要操作的编号: ");
                                 RegistrationId = Scanner.nextInt();
-                                SelectedMenu(RegistrationId);
+                                int Min = (int) Result.get(0)[0];
+                                int Max = (int) Result.get(Result.size() - 1)[0];
+                                if (RegistrationId >= Min && RegistrationId <= Max) {
+                                    SelectedMenu(RegistrationId);
+                                } else {
+                                    System.out.println("没有数据");
+                                }
                             }
                         }
                         break;

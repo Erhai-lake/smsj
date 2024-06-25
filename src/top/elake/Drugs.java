@@ -86,7 +86,13 @@ public class Drugs {
                             }
                             System.out.print("请选择要操作的编号: ");
                             int ID = Scanner.nextInt();
-                            SelectedMenu(ID);
+                            int Min = (int) Result.get(0)[0];
+                            int Max = (int) Result.get(Result.size() - 1)[0];
+                            if (ID >= Min && ID <= Max) {
+                                SelectedMenu(ID);
+                            } else {
+                                System.out.println("没有数据");
+                            }
                         }
                         break;
                     case 4:

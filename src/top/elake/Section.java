@@ -55,7 +55,13 @@ public class Section {
                             }
                             System.out.print("请选择要分配的编号: ");
                             int ID = Scanner.nextInt();
-                            New(SectionName, ID);
+                            int Min = (int) Result.get(0)[0];
+                            int Max = (int) Result.get(Result.size() - 1)[0];
+                            if (ID >= Min && ID <= Max) {
+                                SelectedMenu(ID);
+                            } else {
+                                System.out.println("没有数据");
+                            }
                         }
                         break;
                     case 2:
